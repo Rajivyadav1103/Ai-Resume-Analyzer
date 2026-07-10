@@ -1,0 +1,63 @@
+{% extends 'base.html' %} {% block content %}
+<div class="card shadow">
+  <div class="card-body p-4">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+      <h4>Analysis Report</h4>
+      <a
+        class="btn btn-outline-primary"
+        href="{{ url_for('main.export_report', analysis_id=analysis.id) }}"
+        >Export PDF</a
+      >
+    </div>
+    <div class="row g-4">
+      <div class="col-md-6">
+        <div class="border rounded p-3 mb-3">
+          <h5>ATS Score</h5>
+          <div class="progress">
+            <div
+              class="progress-bar"
+              role="progressbar"
+              style="width: {{ analysis.ats_score }}%"
+            ></div>
+          </div>
+          <p class="mt-2 mb-0">{{ analysis.ats_score }}/100</p>
+        </div>
+        <div class="border rounded p-3 mb-3">
+          <h5>Job Match</h5>
+          <p>{{ analysis.job_match }}%</p>
+        </div>
+        <div class="border rounded p-3 mb-3">
+          <h5>Summary</h5>
+          <p>{{ analysis.summary }}</p>
+        </div>
+      </div>
+      <div class="col-md-6">
+        <div class="border rounded p-3 mb-3">
+          <h5>Skills Found</h5>
+          <p>{{ analysis.skills_found or 'None' }}</p>
+        </div>
+        <div class="border rounded p-3 mb-3">
+          <h5>Missing Skills</h5>
+          <p>{{ analysis.missing_skills or 'None' }}</p>
+        </div>
+        <div class="border rounded p-3 mb-3">
+          <h5>Strengths</h5>
+          <p>{{ analysis.strengths or 'None' }}</p>
+        </div>
+        <div class="border rounded p-3 mb-3">
+          <h5>Weaknesses</h5>
+          <p>{{ analysis.weaknesses or 'None' }}</p>
+        </div>
+      </div>
+    </div>
+    <div class="border rounded p-3 mb-3">
+      <h5>Suggestions</h5>
+      <p>{{ analysis.suggestions or 'None' }}</p>
+    </div>
+    <div class="border rounded p-3">
+      <h5>Final Recommendation</h5>
+      <p>{{ analysis.recommendation or 'Manual review recommended.' }}</p>
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,61 @@
+{% extends 'base.html' %} {% block content %}
+<div class="row g-4">
+  <div class="col-lg-8">
+    <div class="card shadow">
+      <div class="card-body p-4">
+        <h4 class="mb-3">Analyze Resume</h4>
+        <form method="post" enctype="multipart/form-data">
+          <div class="mb-3">
+            <label class="form-label">Upload Resume</label>
+            <input
+              type="file"
+              name="resume_file"
+              class="form-control"
+              accept=".pdf,.docx"
+            />
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Or paste resume text</label>
+            <textarea
+              name="resume_text"
+              class="form-control"
+              rows="8"
+              placeholder="Paste resume content here..."
+            ></textarea>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Job Description</label>
+            <textarea
+              name="job_description"
+              class="form-control"
+              rows="8"
+              placeholder="Paste the job description here..."
+            ></textarea>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">AI Provider</label>
+            <select name="provider" class="form-select">
+              <option value="gemini">Google Gemini</option>
+              <option value="openai">OpenAI</option>
+            </select>
+          </div>
+          <button class="btn btn-primary">Analyze Resume</button>
+        </form>
+      </div>
+    </div>
+  </div>
+  <div class="col-lg-4">
+    <div class="card shadow">
+      <div class="card-body p-4">
+        <h5>How it works</h5>
+        <ul>
+          <li>Upload resume as PDF or DOCX</li>
+          <li>Paste or upload the job description</li>
+          <li>Select Gemini or OpenAI</li>
+          <li>Receive ATS and match insights</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
