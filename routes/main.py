@@ -37,20 +37,70 @@ def dashboard():
             filename = secure_filename(resume_file.filename)
             if not is_allowed_file(filename):
                 flash("Only PDF and DOCX files are allowed.", "danger")
-                return redirect(url_for("main.dashboard"))
+                return render_template(
+                    "dashboard.html",
+                    resume_text=resume_text,
+                    job_description=jd,
+                    provider=provider,
+                )
 
             save_path = os.path.join(Config.UPLOAD_FOLDER, f"{current_user.id}_{uuid.uuid4().hex}_{filename}")
             resume_file.save(save_path)
-            resume_text = extract_text_from_file(save_path)
+            extracted_text = extract_text_from_file(save_path)
+            if extracted_text:
+                resume_text = extracted_text
+            elif not resume_text:
+                flash(
+                    "Could not extract text from the uploaded resume. Please paste the resume content or upload a text-based PDF/DOCX.",
+                    "danger",
+                )
+                return render_template(
+                    "dashboard.html",
+                    resume_text="",
+                    job_description=jd,
+                    provider=provider,
+                )
+            else:
+                flash(
+                    "Could not extract text from the uploaded resume. Using pasted resume text instead.",
+                    "warning",
+                )
 
         if not resume_text or not jd:
-            flash("Resume text and job description are required.", "danger")
-            return redirect(url_for("main.dashboard"))
+            flash(
+                "Both resume text (or uploaded resume) and job description are required.",
+                "danger",
+            )
+            return render_template(
+                "dashboard.html",
+                resume_text=resume_text,
+                job_description=jd,
+                provider=provider,
+            )
+
+        if provider == "openai" and not Config.OPENAI_API_KEY:
+            flash("OpenAI API key is missing. Set OPENAI_API_KEY in your environment.", "danger")
+            return render_template(
+                "dashboard.html",
+                resume_text=resume_text,
+                job_description=jd,
+                provider=provider,
+            )
+
+        if provider == "gemini" and not Config.GEMINI_API_KEY:
+            flash("Gemini API key is missing. Set GEMINI_API_KEY in your environment.", "danger")
+            return render_template(
+                "dashboard.html",
+                resume_text=resume_text,
+                job_description=jd,
+                provider=provider,
+            )
 
         ai_service = AIService(provider=provider)
         analysis = ai_service.analyze(resume_text, jd)
-        if not analysis:
-            flash("AI analysis failed. Please check your API key or try again.", "danger")
+        if not analysis or (isinstance(analysis, dict) and analysis.get("error")):
+            error_message = analysis.get("error") if isinstance(analysis, dict) else None
+            flash(error_message or "AI analysis failed. Please check your API key or try again.", "danger")
             return redirect(url_for("main.dashboard"))
 
         record = Analysis(

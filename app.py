@@ -3,6 +3,9 @@ from flask import Flask, render_template, redirect, url_for
 from flask_login import current_user
 from dotenv import load_dotenv
 
+if not load_dotenv():
+    load_dotenv(dotenv_path='.env.example')
+
 from config import Config
 from extensions import db, login_manager
 from models import User, Analysis
@@ -10,8 +13,6 @@ from routes.auth import auth_bp
 from routes.main import main_bp
 from routes.admin import admin_bp
 from utils.validation import ensure_directories
-
-load_dotenv()
 
 
 def create_app(config_class=Config):
@@ -56,3 +57,4 @@ def create_app(config_class=Config):
 if __name__ == "__main__":
     app = create_app()
     app.run(debug=True, host="0.0.0.0", port=5000)
+
